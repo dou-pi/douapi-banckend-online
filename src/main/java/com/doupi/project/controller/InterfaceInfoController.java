@@ -2,20 +2,21 @@ package com.doupi.project.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.doupi.douapiclientsdk.client.DouApiClient;
 import com.doupi.project.annotation.AuthCheck;
-import com.doupi.project.common.BaseResponse;
-import com.doupi.project.common.DeleteRequest;
-import com.doupi.project.common.ErrorCode;
-import com.doupi.project.common.ResultUtils;
+import com.doupi.project.common.*;
 import com.doupi.project.constant.CommonConstant;
 import com.doupi.project.exception.BusinessException;
 import com.doupi.project.model.dto.interfaceInfo.InterfaceInfoAddRequest;
+import com.doupi.project.model.dto.interfaceInfo.InterfaceInfoInvokeRequest;
 import com.doupi.project.model.dto.interfaceInfo.InterfaceInfoQueryRequest;
 import com.doupi.project.model.dto.interfaceInfo.InterfaceInfoUpdateRequest;
 import com.doupi.project.model.entity.InterfaceInfo;
 import com.doupi.project.model.entity.User;
+import com.doupi.project.model.enums.InterfaceInfoStatusEnum;
 import com.doupi.project.service.InterfaceInfoService;
 import com.doupi.project.service.UserService;
+import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -26,7 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
- * 帖子接口
+ * 接口管理
  *
  * @author doupi
  */
@@ -40,6 +41,9 @@ public class InterfaceInfoController {
 
     @Resource
     private UserService userService;
+
+    @Resource
+    private DouApiClient douApiClient;
 
     // region 增删改查
 
@@ -105,7 +109,7 @@ public class InterfaceInfoController {
      */
     @PostMapping("/update")
     public BaseResponse<Boolean> updateInterfaceInfo(@RequestBody InterfaceInfoUpdateRequest interfaceInfoUpdateRequest,
-                                            HttpServletRequest request) {
+                                                     HttpServletRequest request) {
         if (interfaceInfoUpdateRequest == null || interfaceInfoUpdateRequest.getId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
@@ -196,4 +200,132 @@ public class InterfaceInfoController {
 
     // endregion
 
+    /**
+     * 发布
+     *
+     * @param idRequest
+     * @param request
+     * @return
+     */
+    @PostMapping("/online")
+    @AuthCheck(mustRole = "admin")
+    public BaseResponse<Boolean> onlineInterfaceInfo(@RequestBody IdRequest idRequest,
+                                                     HttpServletRequest request) {
+        if (idRequest == null || idRequest.getId() <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        // 1.校验该接口是否存在
+        long id = idRequest.getId();
+        InterfaceInfo oldInterfaceInfo = interfaceInfoService.getById(id);
+        if (oldInterfaceInfo == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
+        }
+        // 2.判断该接口是否可以调用
+        // 创建一个User对象(这里先模拟一下，搞个假数据)
+        com.doupi.douapiclientsdk.model.User user = new com.doupi.douapiclientsdk.model.User();
+        // 设置user对象的username属性为"test"
+        user.setUsername("test");
+        // 通过yuApiClient的getUsernameByPost方法传入user对象，并将返回的username赋值给username变量
+        String username = douApiClient.getUsernameByPost(user);
+        // 如果username为空或空白字符串
+        if (StringUtils.isBlank(username)) {
+            // 抛出系统错误的业务异常，表示系统内部异常，并附带错误信息"接口验证失败"
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "接口验证失败");
+        }
+        // 创建一个InterfaceInfo对象
+        InterfaceInfo interfaceInfo = new InterfaceInfo();
+        // 设置interfaceInfo的id属性为id
+        interfaceInfo.setId(id);
+        // 3.修改接口数据库中的状态字段为 1
+        interfaceInfo.setStatus(InterfaceInfoStatusEnum.ONLINE.getValue());
+        // 调用interfaceInfoService的updateById方法，传入interfaceInfo对象，并将返回的结果赋值给result变量
+        boolean result = interfaceInfoService.updateById(interfaceInfo);
+        // 返回一个成功的响应，响应体中携带result值
+        return ResultUtils.success(result);
+
+    }
+
+
+    /**
+     * 下线
+     *
+     * @param idRequest
+     * @param request
+     * @return
+     */
+    @PostMapping("/offline")
+    @AuthCheck(mustRole = "admin")
+    public BaseResponse<Boolean> offlineInterfaceInfo(@RequestBody IdRequest idRequest,
+                                                      HttpServletRequest request) {
+        if (idRequest == null || idRequest.getId() <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        // 1.校验该接口是否存在
+        long id = idRequest.getId();
+        InterfaceInfo oldInterfaceInfo = interfaceInfoService.getById(id);
+        if (oldInterfaceInfo == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
+        }
+        // 2.判断该接口是否可以调用
+        // 创建一个User对象(这里先模拟一下，搞个假数据)
+        com.doupi.douapiclientsdk.model.User user = new com.doupi.douapiclientsdk.model.User();
+        // 设置user对象的username属性为"test"
+        user.setUsername("test");
+        // 通过yuApiClient的getUsernameByPost方法传入user对象，并将返回的username赋值给username变量
+        String username = douApiClient.getUsernameByPost(user);
+        // 如果username为空或空白字符串
+        if (StringUtils.isBlank(username)) {
+            // 抛出系统错误的业务异常，表示系统内部异常，并附带错误信息"接口验证失败"
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "接口验证失败");
+        }
+        // 创建一个InterfaceInfo对象
+        InterfaceInfo interfaceInfo = new InterfaceInfo();
+        // 设置interfaceInfo的id属性为id
+        interfaceInfo.setId(id);
+        // 3.修改接口数据库中的状态字段为 1
+        interfaceInfo.setStatus(InterfaceInfoStatusEnum.OFFLINE.getValue());
+        // 调用interfaceInfoService的updateById方法，传入interfaceInfo对象，并将返回的结果赋值给result变量
+        boolean result = interfaceInfoService.updateById(interfaceInfo);
+        // 返回一个成功的响应，响应体中携带result值
+        return ResultUtils.success(result);
+    }
+
+    /**
+     * 测试调用
+     *
+     * @param interfaceInfoInvokeRequest
+     * @param request
+     * @return
+     */
+    @PostMapping("/invoke")
+    public BaseResponse<Object> invokeInterfaceInfo(@RequestBody InterfaceInfoInvokeRequest interfaceInfoInvokeRequest,
+                                                    HttpServletRequest request) {
+        if (interfaceInfoInvokeRequest == null || interfaceInfoInvokeRequest.getId() <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        long id = interfaceInfoInvokeRequest.getId();
+        String userRequestParams = interfaceInfoInvokeRequest.getUserRequestParams();
+        InterfaceInfo oldInterfaceInfo = interfaceInfoService.getById(id);
+        if (oldInterfaceInfo == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
+        }
+        if (oldInterfaceInfo.getStatus() == InterfaceInfoStatusEnum.OFFLINE.getValue()) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "接口已关闭");
+        }
+        // 获取当前登录用户的ak和sk，这样相当于用户自己的这个身份去调用，
+        // 也不会担心它刷接口，因为知道是谁刷了这个接口，会比较安全
+        User loginUser = userService.getLoginUser(request);
+        String accessKey = loginUser.getAccessKey();
+        String secretKey = loginUser.getSecretKey();
+        //创建一个临时的DouApiClient对象，并传入al和sk
+        DouApiClient tempClient = new DouApiClient(accessKey, secretKey);
+        // 我们只需要进行测试调用，所以我们需要解析传递过来的参数。
+        Gson gson = new Gson();
+        // 将用户请求参数转换为com.yupi.yuapiclientsdk.model.User对象
+        com.doupi.douapiclientsdk.model.User user = gson.fromJson(userRequestParams, com.doupi.douapiclientsdk.model.User.class);
+        // 调用YuApiClient的getUsernameByPost方法，传入用户对象，获取用户名
+        String usernameByPost = tempClient.getUsernameByPost(user);
+        // 返回成功响应，并包含调用结果
+        return ResultUtils.success(usernameByPost);
+    }
 }
