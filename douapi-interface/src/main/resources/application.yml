@@ -1,0 +1,9 @@
+
+server:
+  port: 8123
+  servlet:
+    context-path: /api
+youapi:
+  client:
+    access-key: youpi
+    secret-key: abcdefgh
