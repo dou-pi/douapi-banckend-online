@@ -1,6 +1,7 @@
 package com.doupi.douapiinterface.controller;
 
 import com.doupi.douapiclientsdk.model.User;
+import com.doupi.douapiclientsdk.utils.SignUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -40,16 +41,16 @@ public class NameController {
         if (Long.parseLong(nonce) > 10000) {
             throw new RuntimeException("无权限");
         }
-         todo 时间和当前时间不能超过 5 分钟
-        if (timestamp) {
-
-        }
-         todo 实际情况中是从数据库中查出 secretKey
+        // todo 时间和当前时间不能超过 5 分钟
+//        if (timestamp) {
+//
+//        }
+        // todo 实际情况中是从数据库中查出 secretKey
         String serverSign = SignUtils.genSign(body, "abcdefgh");
         if (!sign.equals(serverSign)) {
             throw new RuntimeException("无权限");
         }
-         todo 调用次数 + 1 invokeCount
+        // todo 调用次数 + 1 invokeCount
         String result = "POST 用户名字是" + user.getUsername();
         return result;
     }
