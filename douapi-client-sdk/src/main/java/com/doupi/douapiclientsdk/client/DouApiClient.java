@@ -15,9 +15,6 @@ import static com.doupi.douapiclientsdk.utils.SignUtils.genSign;
 
 /**
  * 调用第三方接口的客户端
- *
- * @author <a href="https://github.com/lidoupi">程序员鱼皮</a>
- * @from <a href="https://doupi.icu">编程导航知识星球</a>
  */
 public class DouApiClient {
 

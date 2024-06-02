@@ -9,8 +9,6 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * 名称 API
  *
- * @author <a href="https://github.com/liyoupi">程序员鱼皮</a>
- * @from <a href="https://youpi.icu">编程导航知识星球</a>
  */
 @RestController
 @RequestMapping("/name")
@@ -18,7 +16,7 @@ public class NameController {
 
     @GetMapping("/get")
     public String getNameByGet(String name, HttpServletRequest request) {
-        System.out.println(request.getHeader("youpi"));
+        System.out.println(request.getHeader("doupi"));
         return "GET 你的名字是" + name;
     }
 
@@ -35,7 +33,7 @@ public class NameController {
         String sign = request.getHeader("sign");
         String body = request.getHeader("body");
         // todo 实际情况应该是去数据库中查是否已分配给用户
-        if (!accessKey.equals("youpi")) {
+        if (!accessKey.equals("doupi")) {
             throw new RuntimeException("无权限");
         }
         if (Long.parseLong(nonce) > 10000) {
@@ -46,7 +44,7 @@ public class NameController {
 //
 //        }
         // todo 实际情况中是从数据库中查出 secretKey
-        String serverSign = SignUtils.genSign(body, "abcdefgh");
+        String serverSign = SignUtils.genSign(body, "abc");
         if (!sign.equals(serverSign)) {
             throw new RuntimeException("无权限");
         }

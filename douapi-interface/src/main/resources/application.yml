@@ -3,7 +3,7 @@ server:
   port: 8123
   servlet:
     context-path: /api
-youapi:
+douapi:
   client:
-    access-key: youpi
-    secret-key: abcdefgh
+    accesskey: doupi
+    secretkey: abc

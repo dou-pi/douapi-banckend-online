@@ -1,17 +1,13 @@
-package com.doupi.douapiinterface;
+package com.doupi.douapigateway;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-/**
- * DouApi 模拟接口入口类
- *
- */
 @SpringBootApplication
-public class DouapiInterfaceApplication {
+public class DouapiGatewayApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(DouapiInterfaceApplication.class, args);
+        SpringApplication.run(DouapiGatewayApplication.class, args);
     }
 
 }

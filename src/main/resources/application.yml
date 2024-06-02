@@ -35,5 +35,5 @@ mybatis-plus:
 
 douapi:
   client:
-    access-key:yupi
-    secret-key:abcdefgh
+    access-key: doupi
+    secret-key: abc
