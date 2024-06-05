@@ -1,4 +1,4 @@
-package com.doupi.project.model.entity;
+package com.doupi.douapicommon.model.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
@@ -8,7 +8,7 @@ import java.util.Date;
 
 /**
  * 接口信息
- * @TableName interface_info
+ *
  */
 @TableName(value ="interface_info")
 @Data
@@ -35,6 +35,14 @@ public class InterfaceInfo implements Serializable {
     private String url;
 
     /**
+     * 请求参数
+     * [
+     *   {"name": "username", "type": "string"}
+     * ]
+     */
+    private String requestParams;
+
+    /**
      * 请求头
      */
     private String requestHeader;
@@ -43,11 +51,6 @@ public class InterfaceInfo implements Serializable {
      * 响应头
      */
     private String responseHeader;
-
-    /**
-     * 请求参数
-     */
-    private String requestParams;
 
     /**
      * 接口状态（0-关闭，1-开启）
@@ -77,7 +80,7 @@ public class InterfaceInfo implements Serializable {
     /**
      * 是否删除(0-未删, 1-已删)
      */
-    @TableLogic //表示为逻辑删除字段
+    @TableLogic
     private Integer isDelete;
 
     @TableField(exist = false)

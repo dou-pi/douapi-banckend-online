@@ -2,6 +2,8 @@ package com.doupi.project.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.doupi.douapicommon.model.entity.User;
+import com.doupi.douapicommon.model.entity.UserInterfaceInfo;
 import com.doupi.project.annotation.AuthCheck;
 import com.doupi.project.common.BaseResponse;
 import com.doupi.project.common.DeleteRequest;
@@ -13,8 +15,6 @@ import com.doupi.project.exception.BusinessException;
 import com.doupi.project.model.dto.userinterfaceinfo.UserInterfaceInfoAddRequest;
 import com.doupi.project.model.dto.userinterfaceinfo.UserInterfaceInfoQueryRequest;
 import com.doupi.project.model.dto.userinterfaceinfo.UserInterfaceInfoUpdateRequest;
-import com.doupi.project.model.entity.User;
-import com.doupi.project.model.entity.UserInterfaceInfo;
 import com.doupi.project.service.UserInterfaceInfoService;
 import com.doupi.project.service.UserService;
 import lombok.extern.slf4j.Slf4j;

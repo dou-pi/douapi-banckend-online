@@ -1,7 +1,7 @@
 package com.doupi.project.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.doupi.project.model.entity.UserInterfaceInfo;
+import com.doupi.douapicommon.model.entity.UserInterfaceInfo;
 
 
 /**

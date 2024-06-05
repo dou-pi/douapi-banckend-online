@@ -1,8 +1,13 @@
 package com.doupi.douapigateway;
 
-
+import com.doupi.douapiclientsdk.utils.SignUtils;
+import com.doupi.douapicommon.model.entity.InterfaceInfo;
+import com.doupi.douapicommon.model.entity.User;
+import com.doupi.douapicommon.service.InnerInterfaceInfoService;
+import com.doupi.douapicommon.service.InnerUserInterfaceInfoService;
+import com.doupi.douapicommon.service.InnerUserService;
 import lombok.extern.slf4j.Slf4j;
-
+import org.apache.dubbo.config.annotation.DubboReference;
 import org.reactivestreams.Publisher;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
@@ -11,7 +16,6 @@ import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferFactory;
 import org.springframework.core.io.buffer.DataBufferUtils;
 import org.springframework.http.HttpHeaders;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
@@ -20,47 +24,16 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@Slf4j
-@Component
-public class CustomGlobalFilter implements GlobalFilter, Ordered {
-
-    private static final String INTERFACE_HOST = "http://localhost:8123";
-
-    @Override
-    public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        // 1. 请求日志
-        ServerHttpRequest request = exchange.getRequest();
-        String path = INTERFACE_HOST + request.getPath().value();
-        String method = request.getMethod().toString();
-        log.info("请求唯一标识：" + request.getId());
-        log.info("请求路径：" + path);
-        log.info("请求方法：" + method);
-        log.info("请求参数：" + request.getQueryParams());
-        String sourceAddress = request.getLocalAddress().getHostString();
-        log.info("请求来源地址：" + sourceAddress);
-        log.info("请求来源地址：" + request.getRemoteAddress());
-        ServerHttpResponse response = exchange.getResponse();
-        return chain.filter(exchange);
-    }
-
-    @Override
-    public int getOrder() {
-        return -1; //值越小执行的优先级越高，转发路由（NettyRoutingFilter）的order是int的最大值
-    }
-}
-
-
 
 /**
  * 全局过滤
+ *
  */
-/*
 @Slf4j
 @Component
 public class CustomGlobalFilter implements GlobalFilter, Ordered {
@@ -114,9 +87,7 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
         if (invokeUser == null) {
             return handleNoAuth(response);
         }
-//        if (!"yupi".equals(accessKey)) {
-//            return handleNoAuth(response);
-//        }
+
         if (Long.parseLong(nonce) > 10000L) {
             return handleNoAuth(response);
         }
@@ -150,15 +121,13 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
 
     }
 
-    */
-/**
+    /**
      * 处理响应
      *
      * @param exchange
      * @param chain
      * @return
-     *//*
-
+     */
     public Mono<Void> handleResponse(ServerWebExchange exchange, GatewayFilterChain chain, long interfaceInfoId, long userId) {
         try {
             ServerHttpResponse originalResponse = exchange.getResponse();
@@ -229,4 +198,4 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
         response.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR);
         return response.setComplete();
     }
-}*/
+}

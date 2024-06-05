@@ -2,7 +2,7 @@ package com.doupi.project.service;
 
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.doupi.project.model.entity.User;
+import com.doupi.douapicommon.model.entity.User;
 
 import javax.servlet.http.HttpServletRequest;
 

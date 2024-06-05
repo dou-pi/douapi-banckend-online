@@ -1,23 +1,19 @@
-package com.doupi.project.model.entity;
+package com.doupi.douapicommon.model.vo;
 
-import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
 
 /**
- * 用户
+ * 用户视图
  *
- * @TableName user
  */
-@TableName(value = "user")
 @Data
-public class User implements Serializable {
+public class UserVO implements Serializable {
     /**
      * id
      */
-    @TableId(type = IdType.AUTO)
     private Long id;
 
     /**
@@ -46,20 +42,6 @@ public class User implements Serializable {
     private String userRole;
 
     /**
-     * 密码
-     */
-    private String userPassword;
-
-    /**
-     * 签名 accessKey
-     */
-    private String accessKey;
-
-    /**
-     *签名 secretKey
-     */
-    private String secretKey;
-    /**
      * 创建时间
      */
     private Date createTime;
@@ -69,12 +51,5 @@ public class User implements Serializable {
      */
     private Date updateTime;
 
-    /**
-     * 是否删除
-     */
-    @TableLogic
-    private Integer isDelete;
-
-    @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 }

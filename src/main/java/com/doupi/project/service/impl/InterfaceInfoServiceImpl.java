@@ -1,10 +1,10 @@
 package com.doupi.project.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.doupi.douapicommon.model.entity.InterfaceInfo;
 import com.doupi.project.common.ErrorCode;
 import com.doupi.project.exception.BusinessException;
 import com.doupi.project.mapper.InterfaceInfoMapper;
-import com.doupi.project.model.entity.InterfaceInfo;
 import com.doupi.project.service.InterfaceInfoService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
