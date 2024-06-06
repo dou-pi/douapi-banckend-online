@@ -10,6 +10,7 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
+
 import org.springframework.stereotype.Service;
 
 @SpringBootApplication(exclude = {
@@ -19,8 +20,10 @@ import org.springframework.stereotype.Service;
 @EnableDubbo
 @Service
 public class DouapiGatewayApplication {
+
     @DubboReference
     private DemoService demoService;
+
 
     public static void main(String[] args) {
 

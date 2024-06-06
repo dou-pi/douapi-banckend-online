@@ -13,7 +13,7 @@ spring:
   # session 失效时间（分钟）
   session:
     timeout: 86400
-    store-type: none
+    store-type: redis
   # redis 配置
   redis:
     port: 6379
@@ -33,20 +33,23 @@ mybatis-plus:
       logic-delete-value: 1 # 逻辑已删除值(默认为 1)
       logic-not-delete-value: 0 # 逻辑未删除值(默认为 0)
 
-douapi:
-  client:
-    access-key: doupi
-    secret-key: abc
+#douapi:
+#  client:
+#    access-key: doupi
+#    secret-key: abc
+
+
+
+  application:
+    name: douapibackend-provider  # 服务提供者的应用名
 
 dubbo:
   application:
-    # 设置应用的名称
-    name: dubbo-springboot-demo-provider
-  # 指定使用 Dubbo 协议，且端口设置为 -1，表示随机分配可用端口
+    name: ${spring.application.name}
   protocol:
     name: dubbo
-    port: 22221
+    port: 20880
   registry:
-    # 配置注册中心为 Nacos，使用的地址是 nacos://localhost:8848
-    id: nacos-registry
-    address: nacos://localhost:8848
+    address: nacos://localhost:8848  # Nacos注册中心地址
+  scan:
+    base-packages: com.doupi.project.provider  # 服务提供者实现类的包路径

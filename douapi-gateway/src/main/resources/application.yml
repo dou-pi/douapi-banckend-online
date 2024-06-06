@@ -5,7 +5,7 @@ spring:
   cloud:
     gateway:
       default-filters:
-        - AddResponseHeader=source, yupi
+        - AddResponseHeader=source, doupi
       routes:
         - id: api_route
           uri: http://localhost:8123
@@ -21,16 +21,16 @@ logging:
 
 
 
+  application:
+    name: douapigateway-consumer  # 服务消费者的应用名
+
 dubbo:
   application:
-    # 设置应用的名称
-    name: dubbo-springboot-demo-provider
-  # 指定使用 Dubbo 协议，且端口设置为 -1，表示随机分配可用端口
-  protocol:
-    name: dubbo
-    port: 22223
+    name: ${spring.application.name}
   registry:
-    # 配置注册中心为 Nacos，使用的地址是 nacos://localhost:8848
-    id: nacos-registry
-    address: nacos://localhost:8848
+    address: nacos://localhost:8848  # Nacos注册中心地址
+  consumer:
+    check: false  # 消费者检查禁用，如果是开发环境可以设置为true
+
+
 
