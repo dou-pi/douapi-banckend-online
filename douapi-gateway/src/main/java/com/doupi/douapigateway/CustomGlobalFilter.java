@@ -4,6 +4,7 @@ package com.doupi.douapigateway;
 import com.doupi.douapiclientsdk.utils.SignUtils;
 import com.doupi.douapicommon.model.entity.InterfaceInfo;
 import com.doupi.douapicommon.model.entity.User;
+import com.doupi.douapicommon.model.entity.UserInterfaceInfo;
 import com.doupi.douapicommon.service.InnerInterfaceInfoService;
 import com.doupi.douapicommon.service.InnerUserInterfaceInfoService;
 import com.doupi.douapicommon.service.InnerUserService;
@@ -31,6 +32,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 全局过滤
@@ -79,7 +82,8 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
         String timestamp = headers.getFirst("timestamp");
         String sign = headers.getFirst("sign");
         String body = headers.getFirst("body");
-        // todo 实际情况应该是去数据库中查是否已分配给用户
+
+        //数据库中查是否已分配给用户
         User invokeUser = null;
         try {
             invokeUser = innerUserService.getInvokeUser(accessKey);
@@ -89,9 +93,6 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
         if (invokeUser == null) {
             return handleNoAuth(response);
         }
-//        if (!"yupi".equals(accessKey)) {
-//            return handleNoAuth(response);
-//        }
         if (Long.parseLong(nonce) > 10000L) {
             return handleNoAuth(response);
         }
@@ -101,7 +102,7 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
         if ((currentTime - Long.parseLong(timestamp)) >= FIVE_MINUTES) {
             return handleNoAuth(response);
         }
-        // 实际情况中是从数据库中查出 secretKey
+        // 从数据库中查出 secretKey
         String secretKey = invokeUser.getSecretKey();
         String serverSign = SignUtils.genSign(body, secretKey);
         if (sign == null || !sign.equals(serverSign)) {
@@ -118,9 +119,10 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
             return handleNoAuth(response);
         }
         // todo 是否还有调用次数
+        String intfaceinfoid = request.getId();
+        log.info("intfaceinfoid" + intfaceinfoid);
+
         // 5. 请求转发，调用模拟接口 + 响应日志
-        //        Mono<Void> filter = chain.filter(exchange);
-        //        return filter;
         return handleResponse(exchange, chain, interfaceInfo.getId(), invokeUser.getId());
 
     }
@@ -158,6 +160,7 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
                                         } catch (Exception e) {
                                             log.error("invokeCount error", e);
                                         }
+
                                         byte[] content = new byte[dataBuffer.readableByteCount()];
                                         dataBuffer.read(content);
                                         DataBufferUtils.release(dataBuffer);//释放掉内存
@@ -202,4 +205,5 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
         response.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR);
         return response.setComplete();
     }
+
 }
